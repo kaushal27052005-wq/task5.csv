@@ -1,0 +1,107 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Step 1: Load CSV file
+# Replace 'sales_data.csv' with your actual file path
+df = pd.read_csv('sales_data.csv')
+
+# Step 2: Display basic information
+print("Dataset Overview:")
+print(df.head())
+print("\nDataset Info:")
+print(df.info())
+print("\nBasic Statistics:")
+print(df.describe())
+
+# Step 3: Check for missing values
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Step 4: Data Analysis
+
+# Analysis 1: Total sales by product
+print("\nTotal Sales by Product:")
+sales_by_product = df.groupby('Product')['Sales'].sum().sort_values(ascending=False)
+print(sales_by_product)
+
+# Analysis 2: Total sales by region
+print("\nTotal Sales by Region:")
+sales_by_region = df.groupby('Region')['Sales'].sum().sort_values(ascending=False)
+print(sales_by_region)
+
+# Analysis 3: Average sales by category
+print("\nAverage Sales by Category:")
+avg_sales_by_category = df.groupby('Category')['Sales'].mean().sort_values(ascending=False)
+print(avg_sales_by_category)
+
+# Analysis 4: Monthly sales trend (if date column exists)
+if 'Date' in df.columns:
+    df['Date'] = pd.to_datetime(df['Date'])
+    df['Month'] = df['Date'].dt.to_period('M')
+    monthly_sales = df.groupby('Month')['Sales'].sum()
+    print("\nMonthly Sales:")
+    print(monthly_sales)
+
+# Step 5: Visualizations
+
+# Chart 1: Sales by Product (Bar Chart)
+plt.figure(figsize=(10, 6))
+sales_by_product.plot(kind='bar', color='skyblue')
+plt.title('Total Sales by Product')
+plt.xlabel('Product')
+plt.ylabel('Sales Amount')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+# Chart 2: Sales by Region (Pie Chart)
+plt.figure(figsize=(8, 8))
+sales_by_region.plot(kind='pie', autopct='%1.1f%%', startangle=90)
+plt.title('Sales Distribution by Region')
+plt.ylabel('')
+plt.tight_layout()
+plt.show()
+
+# Chart 3: Average Sales by Category (Horizontal Bar Chart)
+plt.figure(figsize=(10, 6))
+avg_sales_by_category.plot(kind='barh', color='coral')
+plt.title('Average Sales by Category')
+plt.xlabel('Average Sales Amount')
+plt.ylabel('Category')
+plt.tight_layout()
+plt.show()
+
+# Chart 4: Monthly Sales Trend (Line Chart)
+if 'Date' in df.columns:
+    plt.figure(figsize=(12, 6))
+    monthly_sales.plot(kind='line', marker='o', color='green')
+    plt.title('Monthly Sales Trend')
+    plt.xlabel('Month')
+    plt.ylabel('Sales Amount')
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+# Step 6: Additional Insights
+
+# Top 5 performing products
+print("\nTop 5 Products by Sales:")
+print(sales_by_product.head())
+
+# Bottom 5 performing products
+print("\nBottom 5 Products by Sales:")
+print(sales_by_product.tail())
+
+# Total revenue
+total_revenue = df['Sales'].sum()
+print(f"\nTotal Revenue: ${total_revenue:,.2f}")
+
+# Average transaction value
+avg_transaction = df['Sales'].mean()
+print(f"Average Transaction Value: ${avg_transaction:,.2f}")
+
+# Step 7: Save results to CSV
+sales_by_product.to_csv('sales_by_product.csv')
+sales_by_region.to_csv('sales_by_region.csv')
+print("\nAnalysis results saved to CSV files.")
