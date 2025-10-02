@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# Set visualization style
 plt.style.use('seaborn-v0_8-darkgrid')
 sns.set_palette("husl")
 
@@ -177,4 +176,5 @@ if 'Region' in df.columns and 'Sales' in df.columns:
     print(f"5. Best Performing Region: {best_region}")
 
 print("\n=== Analysis Complete ===")
+
 print("All visualizations have been saved as PNG files.")
