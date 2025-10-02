@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Set style for better-looking plots
-  plt.style.use('default')
-  sns.set_palette("husl")
+plt.style.use('default')
+sns.set_palette("husl")
 
 # Step 1: Load the CSV file
 print("Loading data...")
@@ -138,4 +138,5 @@ revenue_by_product.to_csv('revenue_by_product.csv', header=['Total_Revenue'])
 quantity_by_category.to_csv('quantity_by_category.csv', header=['Total_Quantity'])
 print("Analysis results exported to CSV files")
 print("\nAnalysis Complete!")
+
 
