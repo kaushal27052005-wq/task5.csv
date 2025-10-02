@@ -5,7 +5,6 @@ import numpy as np
 # Step 1: Load CSV file
 # Replace 'sales_data.csv' with your actual file path
 df = pd.read_csv('sales_data.csv')
-
 # Step 2: Display basic information
 print("Dataset Overview:")
 print(df.head())
@@ -104,4 +103,5 @@ print(f"Average Transaction Value: ${avg_transaction:,.2f}")
 # Step 7: Save results to CSV
 sales_by_product.to_csv('sales_by_product.csv')
 sales_by_region.to_csv('sales_by_region.csv')
+
 print("\nAnalysis results saved to CSV files.")
