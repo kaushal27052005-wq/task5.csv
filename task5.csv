@@ -5,103 +5,137 @@ import numpy as np
 # Step 1: Load CSV file
 # Replace 'sales_data.csv' with your actual file path
 df = pd.read_csv('sales_data.csv')
-# Step 2: Display basic information
-print("Dataset Overview:")
+
+# Display basic information about the dataset
+print("Dataset Shape:", df.shape)
+print("\nFirst 5 rows:")
 print(df.head())
+
 print("\nDataset Info:")
 print(df.info())
+
 print("\nBasic Statistics:")
 print(df.describe())
 
-# Step 3: Check for missing values
+# Step 2: Data Cleaning
+# Check for missing values
 print("\nMissing Values:")
 print(df.isnull().sum())
 
-# Step 4: Data Analysis
+# Remove duplicates if any
+df = df.drop_duplicates()
 
-# Analysis 1: Total sales by product
-print("\nTotal Sales by Product:")
-sales_by_product = df.groupby('Product')['Sales'].sum().sort_values(ascending=False)
-print(sales_by_product)
+# Step 3: Data Analysis using groupby()
 
-# Analysis 2: Total sales by region
+# Example 1: Total sales by product category
+sales_by_category = df.groupby('category')['sales'].sum().sort_values(ascending=False)
+print("\nTotal Sales by Category:")
+print(sales_by_category)
+
+# Example 2: Total sales by region
+sales_by_region = df.groupby('region')['sales'].sum().sort_values(ascending=False)
 print("\nTotal Sales by Region:")
-sales_by_region = df.groupby('Region')['Sales'].sum().sort_values(ascending=False)
 print(sales_by_region)
 
-# Analysis 3: Average sales by category
-print("\nAverage Sales by Category:")
-avg_sales_by_category = df.groupby('Category')['Sales'].mean().sort_values(ascending=False)
-print(avg_sales_by_category)
+# Example 3: Average sales by product
+avg_sales_by_product = df.groupby('product')['sales'].mean().sort_values(ascending=False)
+print("\nAverage Sales by Product:")
+print(avg_sales_by_product.head(10))
 
-# Analysis 4: Monthly sales trend (if date column exists)
-if 'Date' in df.columns:
-    df['Date'] = pd.to_datetime(df['Date'])
-    df['Month'] = df['Date'].dt.to_period('M')
-    monthly_sales = df.groupby('Month')['Sales'].sum()
-    print("\nMonthly Sales:")
-    print(monthly_sales)
+# Example 4: Sales count by month
+sales_count_by_month = df.groupby('month')['sales'].count()
+print("\nSales Count by Month:")
+print(sales_count_by_month)
 
-# Step 5: Visualizations
+# Example 5: Multiple aggregations
+sales_summary = df.groupby('category').agg({
+    'sales': ['sum', 'mean', 'count'],
+    'quantity': 'sum'
+})
+print("\nSales Summary by Category:")
+print(sales_summary)
 
-# Chart 1: Sales by Product (Bar Chart)
+# Step 4: Visualizations
+
+# Chart 1: Bar chart - Total sales by category
 plt.figure(figsize=(10, 6))
-sales_by_product.plot(kind='bar', color='skyblue')
-plt.title('Total Sales by Product')
-plt.xlabel('Product')
-plt.ylabel('Sales Amount')
-plt.xticks(rotation=45, ha='right')
+sales_by_category.plot(kind='bar', color='steelblue')
+plt.title('Total Sales by Category')
+plt.xlabel('Category')
+plt.ylabel('Total Sales')
+plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig('sales_by_category.png')
 plt.show()
 
-# Chart 2: Sales by Region (Pie Chart)
+# Chart 2: Horizontal bar chart - Sales by region
+plt.figure(figsize=(10, 6))
+sales_by_region.plot(kind='barh', color='coral')
+plt.title('Total Sales by Region')
+plt.xlabel('Total Sales')
+plt.ylabel('Region')
+plt.tight_layout()
+plt.savefig('sales_by_region.png')
+plt.show()
+
+# Chart 3: Line chart - Sales trend over time
+sales_by_month = df.groupby('month')['sales'].sum()
+plt.figure(figsize=(12, 6))
+sales_by_month.plot(kind='line', marker='o', color='green', linewidth=2)
+plt.title('Sales Trend Over Months')
+plt.xlabel('Month')
+plt.ylabel('Total Sales')
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.savefig('sales_trend.png')
+plt.show()
+
+# Chart 4: Pie chart - Sales distribution by category
 plt.figure(figsize=(8, 8))
-sales_by_region.plot(kind='pie', autopct='%1.1f%%', startangle=90)
-plt.title('Sales Distribution by Region')
+sales_by_category.plot(kind='pie', autopct='%1.1f%%', startangle=90)
+plt.title('Sales Distribution by Category')
 plt.ylabel('')
 plt.tight_layout()
+plt.savefig('sales_distribution.png')
 plt.show()
 
-# Chart 3: Average Sales by Category (Horizontal Bar Chart)
-plt.figure(figsize=(10, 6))
-avg_sales_by_category.plot(kind='barh', color='coral')
-plt.title('Average Sales by Category')
-plt.xlabel('Average Sales Amount')
-plt.ylabel('Category')
+# Chart 5: Top 10 products by sales
+top_products = df.groupby('product')['sales'].sum().sort_values(ascending=False).head(10)
+plt.figure(figsize=(12, 6))
+top_products.plot(kind='bar', color='purple')
+plt.title('Top 10 Products by Sales')
+plt.xlabel('Product')
+plt.ylabel('Total Sales')
+plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
+plt.savefig('top_products.png')
 plt.show()
 
-# Chart 4: Monthly Sales Trend (Line Chart)
-if 'Date' in df.columns:
-    plt.figure(figsize=(12, 6))
-    monthly_sales.plot(kind='line', marker='o', color='green')
-    plt.title('Monthly Sales Trend')
-    plt.xlabel('Month')
-    plt.ylabel('Sales Amount')
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.show()
-
-# Step 6: Additional Insights
-
-# Top 5 performing products
-print("\nTop 5 Products by Sales:")
-print(sales_by_product.head())
-
-# Bottom 5 performing products
-print("\nBottom 5 Products by Sales:")
-print(sales_by_product.tail())
+# Step 5: Additional Insights
 
 # Total revenue
-total_revenue = df['Sales'].sum()
+total_revenue = df['sales'].sum()
 print(f"\nTotal Revenue: ${total_revenue:,.2f}")
 
 # Average transaction value
-avg_transaction = df['Sales'].mean()
+avg_transaction = df['sales'].mean()
 print(f"Average Transaction Value: ${avg_transaction:,.2f}")
 
-# Step 7: Save results to CSV
-sales_by_product.to_csv('sales_by_product.csv')
-sales_by_region.to_csv('sales_by_region.csv')
+# Total number of transactions
+total_transactions = df.shape[0]
+print(f"Total Transactions: {total_transactions:,}")
 
-print("\nAnalysis results saved to CSV files.")
+# Best performing category
+best_category = sales_by_category.idxmax()
+print(f"Best Performing Category: {best_category}")
+
+# Best performing region
+best_region = sales_by_region.idxmax()
+print(f"Best Performing Region: {best_region}")
+
+# Export results to CSV
+sales_by_category.to_csv('sales_by_category_summary.csv')
+sales_by_region.to_csv('sales_by_region_summary.csv')
+print("\nSummary files exported successfully!")
+
+print("\nAnalysis Complete!")
